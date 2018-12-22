@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import './index.css';
+import 'gestalt/dist/gestalt.css';
+
+import Navbar from './components/Navbar';
 import App from './components/App';
 import Checkout from './components/Checkout';
 import Signup from './components/Signup';
@@ -10,12 +12,15 @@ import * as serviceWorker from './serviceWorker';
 
 const Root = () => (
     <Router>
-        <Switch>
-            <Route exact path="/" component={App} />
-            <Route path="/checkout" component={Checkout} />
-            <Route path="/signin" component={Signin} />
-            <Route path="/signup" component={Signup} />
-        </Switch>
+        <React.Fragment>
+            <Navbar />
+            <Switch>
+                <Route exact path="/" component={App} />
+                <Route path="/checkout" component={Checkout} />
+                <Route path="/signin" component={Signin} />
+                <Route path="/signup" component={Signup} />
+            </Switch>
+        </React.Fragment>
     </Router>
 )
 
