@@ -1,3 +1,3 @@
-# server
+# Server
 
-A quick description of server.
+This server has been constructed using the Strapi CLI.
