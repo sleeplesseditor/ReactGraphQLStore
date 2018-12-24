@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Box, Card, Container, Heading, Image, Text } from 'gestalt';
+import { Box, Card, Container, Heading, Icon, Image, SearchField, Text } from 'gestalt';
 import { Link } from 'react-router-dom';
+import Loader from './Loader';
 import './App.css';
 import Strapi from 'strapi-sdk-javascript/build/main';
 
@@ -10,7 +11,9 @@ const strapi = new Strapi(apiUrl);
 class App extends Component {
 
   state = {
-    brands: []
+    brands: [],
+    searchTerm: '',
+    loadingBrands: true
   };
   
   async componentDidMount() {
@@ -31,17 +34,57 @@ class App extends Component {
         }
       });
       this.setState({
-        brands: data.brands
+        brands: data.brands,
+        loadingBrands: false
       });
     } catch (err) {
       console.error(err);
+      this.setState({
+        loadingBrands: false
+      });
     }
   }
 
+  handleChange = ({ value }) => {
+    this.setState({ searchTerm: value });
+  }
+
+  filteredBrands = ({ brands, searchTerm }) => {
+    return brands.filter(brand => {
+      return brand.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      brand.description.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+  };
+
   render() {
-    const { brands } = this.state;
+    const { searchTerm, loadingBrands } = this.state;
     return (
       <Container>
+        <Box
+          display="flex"
+          justifyContent="center"
+          marginTop={4}
+
+        >
+          <SearchField 
+            id="searchField"
+            accessibilityLabel="Brand Search Field"
+            placeholder="Search Brands"
+            value={searchTerm}
+            onChange={this.handleChange}
+          />
+          <Box
+            margin={3}
+          >
+            <Icon 
+              icon="filter"
+              color={searchTerm ? 'orange' : 'gray'}
+              size={20}
+              accessibilityLabel="Filter"
+            />
+          </Box>
+
+        </Box>
         <Box
           display="flex"
           justifyContent="center"
@@ -65,7 +108,7 @@ class App extends Component {
           display="flex"
           justifyContent="around"
         >
-          {brands.map(brand => (
+          {this.filteredBrands(this.state).map(brand => (
             <Box
               paddingY={4}
               margin={2}
@@ -95,7 +138,11 @@ class App extends Component {
                 direction="column"
               >
                 <Text bold size="xl">{brand.name}</Text>
-                <Text>{brand.description}</Text>
+                <Text
+                  margin={20} 
+                >
+                  {brand.description}
+                </Text>
                 <Text bold size="xl">
                   <Link to={`/${brand._id}`}>
                     See Brews
@@ -106,6 +153,7 @@ class App extends Component {
             </Box> 
           ))}
         </Box>
+        <Loader show={loadingBrands}/>
       </Container>
     );
   }
