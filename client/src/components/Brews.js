@@ -109,7 +109,9 @@ class Brews extends Component {
                                 </Text>
                             </Box>
                                 <Text>{brew.description}</Text>
-                                <Text color="orchid">${brew.price}</Text>
+                                <Box marginTop={2}>
+                                    <Text color="orchid">${brew.price}</Text>
+                                </Box>
                             <Box marginTop={2}>
                                 <Text bold size="xl">
                                     <Button 

@@ -143,11 +143,13 @@ class App extends Component {
                 >
                   {brand.description}
                 </Text>
-                <Text bold size="xl">
-                  <Link to={`/${brand._id}`}>
-                    See Brews
-                  </Link>
-                </Text>
+                <Box marginTop={2}>
+                  <Text bold size="xl">
+                    <Link to={`/${brand._id}`}>
+                      See Brews
+                    </Link>
+                  </Text>
+                </Box>
               </Box>
               </Card>
             </Box> 
