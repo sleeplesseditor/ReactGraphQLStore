@@ -100,7 +100,7 @@ class App extends Component {
         <Box
           dangerouslySetInlineStyle={{
             __style: {
-              backgroundColor: '#d6c8ec'
+              backgroundColor: '#e8eaed'
             }
           }}
           shape="rounded"
