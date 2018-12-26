@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Strapi from 'strapi-sdk-javascript/build/main';
 import { Box, Button, Card, Heading, IconButton, Image, Mask, Text } from 'gestalt';
-import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import { calculatePrice, getCart, setCart } from '../utils';
 
 const apiUrl = process.env.API_URL || 'http://localhost:1337';
 const strapi = new Strapi(apiUrl);
@@ -11,7 +12,8 @@ class Brews extends Component {
     state = {
         brews: [],
         brands: '',
-        cartItems: []
+        cartItems: [],
+        redirect: false
     }
 
     async componentDidMount(){
@@ -39,7 +41,8 @@ class Brews extends Component {
             });
             this.setState({
                 brews: response.data.brand.brews,
-                brand: response.data.brand.name
+                brand: response.data.brand.name,
+                cartItems: getCart()
             })
         } catch (err) {
             console.error(err);
@@ -56,18 +59,38 @@ class Brews extends Component {
             });
             this.setState({
                 cartItems: updatedItems
-            });
+            },
+            () => setCart(updatedItems));
         } else {
             const updatedItems = [...this.state.cartItems];
             updatedItems[alreadyInCart].quantity += 1;
             this.setState({
                 cartItems: updatedItems
-            });
+            },
+            () => setCart(updatedItems));
         }
+    }
+
+    deleteItemFromCart = itemToDeleteId => {
+        const filteredItems = this.state.cartItems.filter(item => item._id !== itemToDeleteId);
+        this.setState({
+            cartItems: filteredItems
+        },
+        () => setCart(filteredItems));
+    }
+
+    pushToCheckout = () => {
+        this.setState({
+            redirect: true
+        })
     }
 
     render() {
         const { brand, brews, cartItems } = this.state;
+
+        if (this.state.redirect) {
+            return <Redirect push to="/checkout" />;
+        }
 
         return (
             <Box
@@ -171,7 +194,7 @@ class Brews extends Component {
                         >
                             <Heading
                                 align="center"
-                                size="md"
+                                size="sm"
                             >
                                 Your Cart
                             </Heading>
@@ -196,6 +219,7 @@ class Brews extends Component {
                                         icon="cancel"
                                         size="sm"
                                         iconColor="red"
+                                        onClick={() => this.deleteItemFromCart(item._id)}
                                     />
                                 </Box>
                             ))}
@@ -220,13 +244,18 @@ class Brews extends Component {
                                 <Text
                                     size="lg"
                                 >
-                                    Total: $3.99
+                                    Total: {calculatePrice(cartItems)}
                                 </Text>
-                                <Link
-                                    to="/checkout"
+                                <Box
+                                    marginTop={2}
                                 >
-                                    Checkout
-                                </Link>
+
+                                    <Button 
+                                        color="red"
+                                        text="Checkout"
+                                        onClick={this.pushToCheckout}
+                                    />
+                                </Box>
                             </Box>
                         </Box>
                     </Mask>
