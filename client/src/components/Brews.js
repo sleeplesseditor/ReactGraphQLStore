@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Strapi from 'strapi-sdk-javascript/build/main';
-import { Box, Button, Card, Heading, Image, Text } from 'gestalt';
+import { Box, Button, Card, Heading, Image, Mask, Text } from 'gestalt';
+import { Link } from 'react-router-dom';
 
 const apiUrl = process.env.API_URL || 'http://localhost:1337';
 const strapi = new Strapi(apiUrl);
@@ -9,7 +10,8 @@ class Brews extends Component {
     
     state = {
         brews: [],
-        brands: ''
+        brands: '',
+        cartItems: []
     }
 
     async componentDidMount(){
@@ -45,7 +47,7 @@ class Brews extends Component {
     }
 
     render() {
-        const { brand, brews } = this.state;
+        const { brand, brews, cartItems } = this.state;
 
         return (
             <Box
@@ -53,6 +55,11 @@ class Brews extends Component {
                 display="flex"
                 justifyContent="center"
                 alignItems="start"
+                dangerouslySetInlineStyle={{
+                    __style:{
+                        flexWrap: 'wrap-reverse'
+                    }
+                }}
             >
                 <Box
                     display="flex"
@@ -125,6 +132,64 @@ class Brews extends Component {
                             </Box> 
                         ))}
                     </Box>
+                </Box>
+                <Box
+                    alignSelf="end"
+                    marginTop={2}
+                    marginLeft={8}
+                >
+                    <Mask
+                        shape="rounded"
+                        wash
+                    >
+                        <Box
+                            display="flex"
+                            direction="column"
+                            alignItems="center"
+                            padding={2}
+                        >
+                            <Heading
+                                align="center"
+                                size="md"
+                            >
+                                Your Cart
+                            </Heading>
+                            <Text
+                                color="gray"
+                                italic
+                            >
+                                {cartItems.length} items selected
+                            </Text>
+                            <Box
+                                display="flex"
+                                alignItems="center"
+                                justifyContent="center"
+                                direction="column"
+                            >
+                                <Box
+                                    margin={2}
+                                >
+                                    {cartItems.length === 0 && (
+                                        <Text
+                                            color="red"
+                                        >
+                                            Please select some items
+                                        </Text>
+                                    )}
+                                </Box>
+                                <Text
+                                    size="lg"
+                                >
+                                    Total: $3.99
+                                </Text>
+                                <Link
+                                    to="/checkout"
+                                >
+                                    Checkout
+                                </Link>
+                            </Box>
+                        </Box>
+                    </Mask>
                 </Box>
             </Box>
         )
