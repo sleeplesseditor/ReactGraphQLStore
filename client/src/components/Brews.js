@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Strapi from 'strapi-sdk-javascript/build/main';
-import { Box, Button, Card, Heading, Image, Mask, Text } from 'gestalt';
+import { Box, Button, Card, Heading, IconButton, Image, Mask, Text } from 'gestalt';
 import { Link } from 'react-router-dom';
 
 const apiUrl = process.env.API_URL || 'http://localhost:1337';
@@ -43,6 +43,26 @@ class Brews extends Component {
             })
         } catch (err) {
             console.error(err);
+        }
+    }
+
+    addToCart = brew => {
+        const alreadyInCart = this.state.cartItems.findIndex(item => item._id === brew._id );
+        
+        if (alreadyInCart === -1){
+            const updatedItems = this.state.cartItems.concat({
+                ...brew,
+                quantity: 1
+            });
+            this.setState({
+                cartItems: updatedItems
+            });
+        } else {
+            const updatedItems = [...this.state.cartItems];
+            updatedItems[alreadyInCart].quantity += 1;
+            this.setState({
+                cartItems: updatedItems
+            });
         }
     }
 
@@ -123,6 +143,7 @@ class Brews extends Component {
                                 <Text bold size="xl">
                                     <Button 
                                         color="blue"
+                                        onClick={() => this.addToCart(brew)}
                                         text="Add to Cart"
                                     />
                                 </Text>
@@ -160,6 +181,25 @@ class Brews extends Component {
                             >
                                 {cartItems.length} items selected
                             </Text>
+
+                            {cartItems.map(item => (
+                                <Box 
+                                    key={item._id}
+                                    display="flex"
+                                    alignItems="center"
+                                >
+                                    <Text>
+                                        {item.name} x {item.quantity} - ${(item.quantity * item.price).toFixed(2)}
+                                    </Text>
+                                    <IconButton 
+                                        accessibilityLabel="Delete Item"
+                                        icon="cancel"
+                                        size="sm"
+                                        iconColor="red"
+                                    />
+                                </Box>
+                            ))}
+
                             <Box
                                 display="flex"
                                 alignItems="center"
