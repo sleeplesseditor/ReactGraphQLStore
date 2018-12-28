@@ -1,16 +1,24 @@
 import React, { Component } from 'react';
-import { Box, Container, Heading, TextField } from 'gestalt';
+import { Box, Container, Heading, Text, TextField } from 'gestalt';
 import ToastMessage from './ToastMessage';
+import { getCart, calculatePrice } from '../utils';
 
 class Checkout extends Component {
 
     state = {
+        cartItems: [],
         address: '',
         city: '',
         postalCode: '',
         confirmationEmailAddress: '',
         toast: false,
         toastMessage: '',
+    };
+
+    componentDidMount(){
+        this.setState({
+            cartItems: getCart()
+        })
     }
 
     handleChange = ({ event, value }) => {
@@ -46,7 +54,7 @@ class Checkout extends Component {
     }
 
     render() {
-        const { toast, toastMessage } = this.state;
+        const { toast, toastMessage, cartItems } = this.state;
 
         return (
             <Container>
@@ -57,7 +65,42 @@ class Checkout extends Component {
                     shape="rounded"
                     display="flex"
                     justifyContent="center"
+                    alignItems="center"
+                    direction="column"
                 >
+                    <Heading
+                        color="midnight"
+                    >
+                        Checkout
+                    </Heading>
+                    {cartItems.length > 0 ? <React.Fragment>
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        direction="column"
+                        marginTop={2}
+                        marginBottom={6}
+                    >
+                        <Text
+                            color="darkGray"
+                            italic
+                        >
+                            {cartItems.length} Items for Checkout
+                        </Text>
+                        <Box
+                            padding={2}
+                        >
+                            {cartItems.map(item => (
+                                <Box key={item._id} padding={1}>
+                                    <Text color="midnight">
+                                        {item.name} x {item.quantity} – ${item.quantity * item.price}
+                                    </Text>
+                                </Box>
+                            ))}
+                        </Box>
+                        <Text bold>Total: {calculatePrice(cartItems)}</Text>
+                    </Box>
                     <form 
                         style={{
                             display: 'inlineBlock',
@@ -66,11 +109,6 @@ class Checkout extends Component {
                         }}
                         onSubmit={this.handleConfirmOrder}
                     >
-                            <Heading
-                                color="midnight"
-                            >
-                                Checkout
-                            </Heading>
                             <Box
                                 marginTop={2}
                             >
@@ -126,6 +164,28 @@ class Checkout extends Component {
                                 </button>
                             </Box>
                     </form>
+                    </React.Fragment> : (
+                        <Box
+                            color="darkWash"
+                            shape="rounded"
+                            padding={4}
+                        >
+                            <Heading
+                                color="watermelon"
+                                align="center"
+                                size="xs"
+                            >
+                                Your Cart is Empty
+                            </Heading>
+                            <Text
+                                align="center"
+                                italic
+                                color="green"
+                            >
+                                Add some brews!
+                            </Text>
+                        </Box>
+                    )}
                 </Box>
                 <ToastMessage 
                     show={toast}
