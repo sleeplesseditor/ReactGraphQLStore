@@ -81,6 +81,8 @@ ssl
 .idea
 nbproject
 
+keys.js
+
 
 ############################
 # Node.js

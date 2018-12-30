@@ -21,7 +21,8 @@
   "dependencies": {
     "lodash": "^4.17.5",
     "strapi": "3.0.0-alpha.17",
-    "strapi-hook-mongoose": "3.0.0-alpha.17"
+    "strapi-hook-mongoose": "3.0.0-alpha.17",
+    "stripe": "^6.20.0"
   },
   "author": {
     "name": "joshbryson",

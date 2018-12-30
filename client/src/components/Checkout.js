@@ -2,7 +2,12 @@ import React, { Component } from 'react';
 import { Box, Button, Container, Heading, Modal, Spinner, Text, TextField } from 'gestalt';
 import { CardElement, Elements, injectStripe, StripeProvider } from 'react-stripe-elements';
 import ToastMessage from './ToastMessage';
-import { getCart, calculatePrice } from '../utils';
+import { withRouter } from 'react-router-dom';
+import { getCart, calculatePrice, clearCart, calculateAmount } from '../utils';
+import Strapi from 'strapi-sdk-javascript/build/main';
+
+const apiUrl = process.env.API_URL || 'http://localhost:1337';
+const strapi = new Strapi(apiUrl);
 
 class _CheckoutForm extends Component {
 
@@ -42,11 +47,46 @@ class _CheckoutForm extends Component {
         this.setState({ modal: true });
     };
 
+    handleSubmitOrder = async () => {
+        const { cartItems, city, address, postalCode } = this.state;
+
+        const amount = calculateAmount(cartItems);
+        this.setState({
+            orderProcessing: true
+        });
+        let token;
+        try {
+            const response = await this.props.stripe.createToken();
+            token = response.token.id;
+            await strapi.createEntry('orders', {
+                amount,
+                brews: cartItems,
+                city,
+                postalCode,
+                address, 
+                token
+            });
+            this.setState({
+                orderProcessing: false,
+                modal: false
+            });
+            clearCart();
+            this.showToast('Your order has been successfully submitted!', true);
+
+        } catch (err) {
+            this.setState({
+                orderProcessing: false,
+                modal: false
+            });
+            this.showToast(err.message);
+        }
+    }
+
     isFormEmpty = ({ address, city, postalCode, confirmationEmailAddress }) => {
         return !address || !city || !postalCode || !confirmationEmailAddress;
     };
 
-    showToast = toastMessage => {
+    showToast = (toastMessage, redirect = false) => {
         this.setState({
             toast: true,
             toastMessage
@@ -54,7 +94,8 @@ class _CheckoutForm extends Component {
         setTimeout(() => this.setState({ 
             toast: false,
             toastMessage: '' 
-        }), 5000);
+        }, () => redirect && this.props.history.push('/')
+        ), 5000);
     };
 
     closeModal = () => this.setState({
@@ -127,7 +168,7 @@ class _CheckoutForm extends Component {
                             
                                 <TextField 
                                     id="postalCode"
-                                    type="number"
+                                    type="text"
                                     name="postalCode"
                                     placeholder="Postal Code"
                                     onChange={this.handleChange}
@@ -288,7 +329,7 @@ const ConfirmationModal = ({ orderProcessing, cartItems, closeModal, handleSubmi
 
 const publishKey = require('../config/keys').publishableKey;
 
-const CheckoutForm = injectStripe(_CheckoutForm);
+const CheckoutForm = withRouter(injectStripe(_CheckoutForm));
 
 const Checkout = () => (
     <StripeProvider
