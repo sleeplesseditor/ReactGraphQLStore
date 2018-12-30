@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { Box, Button, Container, Heading, Modal, Spinner, Text, TextField } from 'gestalt';
+import { CardElement, Elements, injectStripe, StripeProvider } from 'react-stripe-elements';
 import ToastMessage from './ToastMessage';
 import { getCart, calculatePrice } from '../utils';
 
-class Checkout extends Component {
+class _CheckoutForm extends Component {
 
     state = {
         cartItems: [],
@@ -116,9 +117,6 @@ class Checkout extends Component {
                         }}
                         onSubmit={this.handleConfirmOrder}
                     >
-                            <Box
-                                marginTop={2}
-                            >
                                 <TextField 
                                     id="address"
                                     type="text"
@@ -126,10 +124,7 @@ class Checkout extends Component {
                                     placeholder="Shipping Address"
                                     onChange={this.handleChange}
                                 />
-                            </Box>
-                            <Box
-                                marginTop={2}
-                            >
+                            
                                 <TextField 
                                     id="postalCode"
                                     type="number"
@@ -137,10 +132,7 @@ class Checkout extends Component {
                                     placeholder="Postal Code"
                                     onChange={this.handleChange}
                                 />
-                            </Box>
-                            <Box
-                                marginTop={2}
-                            >
+                            
                                 <TextField 
                                     id="city"
                                     type="text"
@@ -148,10 +140,7 @@ class Checkout extends Component {
                                     placeholder="City of Residence"
                                     onChange={this.handleChange}
                                 />
-                            </Box>
-                            <Box
-                                marginTop={2}
-                            >
+                            
                                 <TextField 
                                     id="confirmationEmailAddress"
                                     type="email"
@@ -159,17 +148,17 @@ class Checkout extends Component {
                                     placeholder="Confirm Email Address"
                                     onChange={this.handleChange}
                                 />
-                            </Box>
-                            <Box
-                                marginTop={2}
-                            >
+                            
+                                <CardElement 
+                                    id="stripe__input"
+                                    onReady={input => input.focus()}
+                                />
                                 <button 
                                     id="stripe__button"
                                     type="submit"
                                 >
                                     Submit
                                 </button>
-                            </Box>
                     </form>
                     </React.Fragment> : (
                         <Box
@@ -184,13 +173,17 @@ class Checkout extends Component {
                             >
                                 Your Cart is Empty
                             </Heading>
-                            <Text
-                                align="center"
-                                italic
-                                color="green"
+                            <Box
+                                marginTop={2}
                             >
-                                Add some brews!
-                            </Text>
+                                <Text
+                                    align="center"
+                                    italic
+                                    color="green"
+                                >
+                                    Add some brews!
+                                </Text>
+                            </Box>
                         </Box>
                     )}
                 </Box>
@@ -291,6 +284,20 @@ const ConfirmationModal = ({ orderProcessing, cartItems, closeModal, handleSubmi
             Submitting Order...
         </Text>}
     </Modal>
+);
+
+const publishKey = require('../config/keys').publishableKey;
+
+const CheckoutForm = injectStripe(_CheckoutForm);
+
+const Checkout = () => (
+    <StripeProvider
+        apiKey={publishKey}
+    >
+        <Elements>
+            <CheckoutForm />
+        </Elements>
+    </StripeProvider>
 )
 
 export default Checkout;
