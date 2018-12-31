@@ -1,0 +1,25 @@
+{
+  "name": "graphql_store",
+  "version": "1.0.0",
+  "description": "An online store built using React, GraphQL, Stripe and Strapi, with [Reed Barger's course](https://www.udemy.com/build-an-online-store-with-react-and-graphql-in-90-minutes).",
+  "main": "index.js",
+  "scripts": {
+    "server": "cd server && strapi start",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sleeplesseditor/ReactGraphQLStore.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sleeplesseditor/ReactGraphQLStore/issues"
+  },
+  "homepage": "https://github.com/sleeplesseditor/ReactGraphQLStore#readme",
+  "dependencies": {
+    "concurrently": "^4.1.0"
+  }
+}
