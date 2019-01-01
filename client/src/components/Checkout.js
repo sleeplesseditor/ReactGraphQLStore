@@ -48,7 +48,7 @@ class _CheckoutForm extends Component {
     };
 
     handleSubmitOrder = async () => {
-        const { cartItems, city, address, postalCode } = this.state;
+        const { cartItems, city, confirmationEmailAddress, address, postalCode } = this.state;
 
         const amount = calculateAmount(cartItems);
         this.setState({
@@ -66,6 +66,14 @@ class _CheckoutForm extends Component {
                 address, 
                 token
             });
+            await strapi.request('POST', '/email', {
+                data: {
+                    to: confirmationEmailAddress,
+                    subject: `Order Confirmation – BrewHaha ${new Date(Date.now())}`,
+                    text: `Your order has been processed`,
+                    html: `<bold>Expect your order to arrive in 2-3 shipping days</bold>`
+                }
+            })
             this.setState({
                 orderProcessing: false,
                 modal: false
