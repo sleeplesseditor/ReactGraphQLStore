@@ -80,9 +80,7 @@ $RECYCLE.BIN/
 ssl
 .idea
 nbproject
-
-keys.js
-
+stripeKey.js
 
 ############################
 # Node.js
@@ -95,8 +93,6 @@ logs
 results
 node_modules
 .node_history
-database.json
-
 
 ############################
 # Tests

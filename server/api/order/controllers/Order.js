@@ -1,6 +1,6 @@
 'use strict';
 
-const strSec = require('../config/keys').stripeSecret;
+const strSec = require('../config/stripeKey').stripeSecret;
 const stripe = require('stripe')(`${strSec}`);
 
 /**
