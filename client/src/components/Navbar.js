@@ -54,12 +54,14 @@ const AuthNav = ({ handleSignOut }) => {
                             src="./icons/logo.svg"
                         />
                     </Box>
-                    <Heading
-                        size="xs"
-                        color="orange"
-                    >
-                        BrewHaha
-                    </Heading>
+                    <div className="main-title">
+                        <Heading
+                            size="xs"
+                            color="orange"
+                        >
+                            BrewHaha
+                        </Heading>
+                    </div>
                 </Box>
             </NavLink>
             <Button 
@@ -113,12 +115,14 @@ const UnAuthNav = () => {
                             src="./icons/logo.svg"
                         />
                     </Box>
-                    <Heading
-                        size="xs"
-                        color="orange"
-                    >
-                        BrewHaha
-                    </Heading>
+                    <div className="main-title">
+                        <Heading
+                            size="xs"
+                            color="orange"
+                        >
+                            BrewHaha
+                        </Heading>
+                    </div>
                 </Box>
             </NavLink>
 

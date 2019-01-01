@@ -75,3 +75,9 @@ form input {
     transition: all 150ms ease;
   }
   
+  /* Media Queries */
+  @media (max-width: 400px) {
+    .main-title {
+      display: none;
+    }
+  } 
